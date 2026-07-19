@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAGHEERA VIDEO RENDER STAGE</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; overflow: hidden; }
+        body { background: #000; color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; }
+        #canvas-stage { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; }
+        .control-panel {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
+        .btn-render {
+            background: linear-gradient(135deg, #ff0033 0%, #990011 100%);
+            color: white; border: none; padding: 15px 40px; font-size: 1.2rem;
+            font-weight: bold; text-transform: uppercase; border-radius: 50px;
+            cursor: pointer; box-shadow: 0 0 20px rgba(255,0,51,0.6); transition: 0.2s;
+        }
+        .btn-render:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(255,0,51,0.9); }
+        .status-txt { color: #33ffaa; font-family: monospace; font-size: 1rem; text-shadow: 0 0 10px #00ffcc; }
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas-stage"></canvas>
+    
+    <div class="control-panel">
+        <div id="status" class="status-txt">ENGINE READY FOR EXPORT // KNOCKSSTUDiOS</div>
+        <button class="btn-render" onclick="startVideoRender()">Render & Export Social Video</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas-stage');
+        const ctx = canvas.getContext('2d');
+        
+        // Match exact standard vertical short-form video constraints (TikTok/Reels: 1080x1920)
+        canvas.width = 1080;
+        canvas.height = 1920;
+
+        // Particle configuration arrays (Bioluminescent Bugs)
+        const bugCount = 80;
+        const bugs = [];
+        for(let i=0; i<bugCount; i++) {
+            bugs.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 4 + 2,
+                vx: (Math.random() - 0.5) * 8,
+                vy: (Math.random() - 0.5) * 8,
+                alpha: Math.random()
+            });
+        }
+
+        let frameIndex = 0;
+        const totalFrames = 180; // 6 seconds at 30fps
+        let isRendering = false;
+        let mediaRecorder;
+        let recordedChunks = [];
+
+        function drawFrame(f) {
+            // 1. PITCH-BLACK JUNGLE BACKGROUND
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Ambient dark crimson glow expanding from center
+            let glowGrad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 100, canvas.width/2, canvas.height/2, 800);
+            glowGrad.addColorStop(0, 'rgba(255, 0, 51, 0.15)');
+            glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = glowGrad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 2. DYNAMIC SCATTERING JUNE BUGS ANIMATION MATRIX
+            bugs.forEach(bug => {
+                bug.x += bug.vx;
+                bug.y += bug.vy;
+                
+                // Explode out violently if the panther "strikes" mid-timeline (Frame 45)
+                if (f === 45) { bug.vx *= 5; bug.vy *= 5; }
+
+                // Boundaries management
+                if(bug.x < 0 || bug.x > canvas.width) bug.vx *= -1;
+                if(bug.y < 0 || bug.y > canvas.height) bug.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(bug.x, bug.y, bug.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(51, 255, 170, ${Math.sin(f*0.1 + bug.alpha)})`;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = '#00ffcc';
+                ctx.fill();
+            });
+            ctx.shadowBlur = 0; // Reset shadow maps
+
+            // 3. CINEMATIC TEXT BLOCKS: KNOCKSSTUDiOS BRANDING STYLE
+            ctx.textAlign = 'center';
+            
+            if (f > 45) {
+                // Drop dynamic liquid metal scale interpolation calculations
+                let scale = Math.min(1, (f - 45) / 15);
+                ctx.save();
+                ctx.translate(canvas.width / 2, canvas.height / 2 - 100);
+                ctx.scale(scale, scale);
+
+                // Chrome Text Gradient setup
+                let metalGrad = ctx.createLinearGradient(-300, 0, 300, 0);
+                metalGrad.addColorStop(0, '#111111');
+                metalGrad.addColorStop(0.3, '#aaaaaa');
+                metalGrad.addColorStop(0.5, '#ffffff');
+                metalGrad.addColorStop(0.7, '#777777');
+                metalGrad.addColorStop(1, '#111111');
+
+                ctx.font = 'black 90px Impact, Arial Black';
+                ctx.fillStyle = metalGrad;
+                ctx.strokeStyle = '#ff0033';
+                ctx.lineWidth = 3;
+                ctx.fillText('KNOCKSSTUDiOS', 0, 0);
+                ctx.strokeText('KNOCKSSTUDiOS', 0, 0);
+                ctx.restore();
+            }
+
+            // Birthday messaging overlay reveal
+            if (f > 75) {
+                let opacity = Math.min(1, (f - 75) / 20);
+                ctx.font = 'bold 50px monospace';
+                ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                ctx.fillText('BAGHEERA SYSTEM // PROD ACTIVE', canvas.width / 2, canvas.height / 2 + 100);
+                
+                ctx.font = '900 110px Impact';
+                ctx.fillStyle = `rgba(255, 0, 51, ${opacity})`;
+                ctx.fillText('HAPPY BIRTHDAY', canvas.width / 2, canvas.height / 2 + 250);
+            }
+        }
+
+        // Live interface loop preview execution
+        function livePreview() {
+            if(!isRendering) {
+                frameIndex = (frameIndex + 1) % totalFrames;
+                drawFrame(frameIndex);
+            }
+            requestAnimationFrame(livePreview);
+        }
+        livePreview();
+
+        // 4. HARDWARE VIDEO CAPTURE ENGINE
+        function startVideoRender() {
+            isRendering = true;
+            recordedChunks = [];
+            frameIndex = 0;
+            
+            document.getElementById('status').innerText = "RENDERING BITSTREAM DIRECT TO STORAGE...";
+
+            // Capture the precise canvas display output line natively at 30 FPS
+            const stream = canvas.captureStream(30);
+            mediaRecorder = new MediaRecorder(stream, {
+                mimeType: 'video/webm;codecs=vp9', // Highest standard mobile container performance profile
+                videoBitsPerSecond: 5000000        // High-fidelity 5Mbps clear bitrate
+            });
+
+            mediaRecorder.ondataavailable = (e) => { if(e.data.size > 0) recordedChunks.push(e.data); };
+            
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                
+                // Automatic hardware injection download prompt
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `KNOCKSSTUDiOS_BAGHEERA_BDAY_${Date.now()}.webm`;
+                document.body.appendChild(a);
+                a.click();
+                
+                document.getElementById('status').innerText = "EXPORT COMPLETE! CHECK STORAGE DOWNLOADS.";
+                isRendering = false;
+            };
+
+            mediaRecorder.start();
+
+            // Direct render loop stepping block
+            function renderStep() {
+                if(frameIndex < totalFrames) {
+                    drawFrame(frameIndex);
+                    frameIndex++;
+                    setTimeout(renderStep, 33); // Enforce rigid 30 FPS execution timing bounds
+                } else {
+                    mediaRecorder.stop();
+                }
+            }
+            renderStep();
+        }
+    </script>
+</body>
+</html>
