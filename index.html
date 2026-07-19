@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>KNOCKSSTUDiOS | HOLLYWOOD MOTiON PiCTURES</title>
+<title>KNOCKSSTUDiOS | Hollywood MOTiON Pictures</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
@@ -93,7 +93,7 @@ h1.hero .i-low{text-transform:lowercase;}
 
 <div id="ui-root"></div>
 <div class="dots" id="dots"></div>
-<div class="legal">&copy; 2026 KNOCKSSTUDiOS &mdash; HOLLYWOOD MOTiON PiCTURES</div>
+<div class="legal">&copy; 2026 KNOCKSSTUDiOS &mdash; HOLLYWOOD MOTiON PICTURES</div>
 
 <script type="module">
 import * as THREE from 'three';
@@ -156,13 +156,13 @@ async function initScene(){
   renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.4; renderer.outputColorSpace=THREE.SRGBColorSpace;
   stage.appendChild(renderer.domElement);
 
-  // Bio-electric high contrast lightning palette setup
+  // High-contrast, bio-electric setup
   const key=new THREE.PointLight(0x00ff55, 12, 50); key.position.set(6, 5, 6);
   const rim=new THREE.PointLight(0x00e5ff, 15, 50); rim.position.set(-6, -4, -4);
   const ambientLight = new THREE.AmbientLight(0x020a05, 2.0);
   scene.add(key, rim, ambientLight);
 
-  // ⚡ BAGHEERA LIQUID CHROMIUM METABALL ENGINE
+  // ⚡ BAGHEERA MARCHING CUBES (Dark Fluid Chromium Mesh)
   const resolution = 32;
   const blobMaterial = new THREE.MeshStandardMaterial({
     color: 0x050f0a,
@@ -172,7 +172,7 @@ async function initScene(){
     envMapIntensity: 1.0
   });
 
-  // Dynamic procedural reflections
+  // Dynamic ambient mirror reflection maps
   const pmrem = new THREE.PMREMGenerator(renderer);
   const envScene = new THREE.Scene();
   const skyMat = new THREE.ShaderMaterial({
@@ -195,7 +195,7 @@ async function initScene(){
   effect.enableColors = false;
   scene.add(effect);
 
-  // ⚡ HOLLYWOOD TEXT ARCHITECTURE LAYER
+  // ⚡ HOLLYWOOD TEXT LAYER & MARK GEOMETRY
   const markMat=new THREE.MeshStandardMaterial({color:0xffffff,metalness:1,roughness:0.12,envMapIntensity:1.4});
   const ring=new THREE.TorusGeometry(0.5,0.13,32,90);
   const mark=new THREE.Group();const rA=new THREE.Mesh(ring,markMat),rB=new THREE.Mesh(ring,markMat);
@@ -226,7 +226,7 @@ async function initScene(){
   addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
     renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight);});
 
-  // Metaballs fluid update function
+  // Fluid update cycle for the organic metaball matrix
   function updateMetaballs(object, time) {
     object.reset();
     const numblobs = 8;
