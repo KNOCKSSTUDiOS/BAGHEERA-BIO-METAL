@@ -1,0 +1,79 @@
+// BAGHEERA DISPLAY ENGINE INTERFACE CONTEXT
+(function (global) {
+  "use strict";
+
+  const BagheeraUI = {
+    meta: {
+      target: "BAGHEERA-BIO-METAL",
+      version: "1.0.0-UX"
+    },
+
+    // 1. Dashboard Panel State & Configuration
+    dashboard: {
+      panelId: "bagheera-dashboard-panel",
+      visible: true,
+      metrics: ["fps", "memory", "pipeline-status"]
+    },
+
+    // 2. Navigation Matrix (Menus, Tiles, Burger Dropdowns)
+    navigation: {
+      burgerOpen: false,
+      activeTile: "overview",
+      
+      toggleBurger() {
+        this.burgerOpen = !this.burgerOpen;
+        const navEl = document.getElementById("bagheera-burger-dropdown");
+        if (navEl) {
+          navEl.classList.toggle("is-active", this.burgerOpen);
+        }
+      },
+
+      selectTile(tileName) {
+        this.activeTile = tileName;
+        // Broadcast structural update to pipeline
+        console.log(`[BAGHEERA] View switched to tile: ${tileName}`);
+      }
+    },
+
+    // 3. User Execution Prompts & Render Triggers
+    prompt: {
+      activePrompt: null,
+      
+      showConfirm(message, onConfirm) {
+        this.activePrompt = { message, onConfirm };
+        // Trigger non-blocking overlay framework UI
+        console.log(`[PROMPT] Action required: ${message}`);
+      },
+
+      clear() {
+        this.activePrompt = null;
+      }
+    },
+
+    // 4. Graphics Context Integration
+    graphics: {
+      setupDisplay(renderer) {
+        if (!renderer || typeof renderer.setPixelRatio !== "function") {
+          console.warn("[BAGHEERA] Invalid WebGL renderer context passed.");
+          return;
+        }
+        
+        // Lock scale factor to 2 max to save thermal performance on mobile targets
+        const ratio = Math.min(window.devicePixelRatio, 2);
+        renderer.setPixelRatio(ratio);
+        console.log(`[BAGHEERA] Render Pixel Ratio initialized to: ${ratio}`);
+      }
+    }
+  };
+
+  // Enforce structural integrity against auto-modifications at runtime
+  Object.freeze(BagheeraUI);
+  Object.freeze(BagheeraUI.dashboard);
+  Object.freeze(BagheeraUI.navigation);
+  Object.freeze(BagheeraUI.prompt);
+  Object.freeze(BagheeraUI.graphics);
+
+  // Expose to target execution layer safely
+  global.BagheeraUI = BagheeraUI;
+
+})(typeof window !== "undefined" ? window : globalThis);
