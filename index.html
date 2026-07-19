@@ -1,176 +1,268 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KNOCKSSTUDiOS Cinematic Intro</title>
-    <style>
-        * { margin: 0; padding: 0; overflow: hidden; box-sizing: border-box; }
-        body, html { width: 100%; height: 100%; background: #000000; }
-        
-        #cinematic-video {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            object-fit: cover;
-            z-index: 1;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KNOCKSSTUDiOS | HOLLYWOOD MOTiON PiCTURES</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+}}
+</script>
+<style>
+:root{ --blue:#0077FF; --orange:#FF6A00; --cyan:#00E5FF; --gold:#D4AF37; --void:#05060A; --white:#F5F5F5; }
+*{box-sizing:border-box;}
+body,html{margin:0;padding:0;background:var(--void);color:var(--white);
+  font-family:'Rajdhani',sans-serif;overflow-x:hidden;scroll-snap-type:y mandatory;scroll-behavior:smooth;}
+#stage{position:fixed;inset:0;z-index:1;pointer-events:none;}
+#stage canvas{display:block;}
+.grain{position:fixed;inset:0;z-index:5;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;}
+.vignette{position:fixed;inset:0;z-index:4;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.66) 100%);}
 
-        #fx-canvas {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            z-index: 2;
-            pointer-events: none;
-        }
+/* top nav */
+nav{position:fixed;top:0;left:0;width:100%;z-index:20;display:flex;align-items:center;
+  justify-content:space-between;padding:18px 28px;font-weight:700;letter-spacing:.18em;font-size:.72rem;text-transform:uppercase;}
+nav .brand{color:var(--white);}
+nav .brand .i-low{text-transform:lowercase;}
+nav .links{display:flex;gap:22px;}
+nav a{color:rgba(245,245,245,.6);text-decoration:none;transition:color .3s;}
+nav a:hover{color:var(--cyan);}
+@media(max-width:640px){nav .links{display:none;}}
 
-        .ui-overlay {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            color: #ff0033;
-            font-family: 'Impact', sans-serif;
-            font-size: 5rem;
-            letter-spacing: 0.5rem;
-            display: none;
-            text-shadow: 0 0 20px #ff0000;
-            z-index: 10;
-        }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+section{height:100vh;width:100vw;position:relative;scroll-snap-align:start;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;z-index:10;padding:0 8vw;}
+section[data-size="full"]{align-items:center;text-align:center;}
+section[data-size="split"]{align-items:flex-start;text-align:left;}
+section[data-size="text"]{align-items:flex-start;text-align:left;}
+
+.bg-v{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;
+  opacity:.40;filter:contrast(1.25) brightness(.6) saturate(1.1);}
+section[data-size="text"] .bg-v{display:none;}
+section[data-size="text"]{background:
+  radial-gradient(circle at 20% 30%,rgba(0,119,255,.10),transparent 45%),
+  radial-gradient(circle at 80% 70%,rgba(255,106,0,.08),transparent 45%),var(--void);}
+
+.label{color:var(--cyan);letter-spacing:.85em;font-size:.72rem;font-weight:700;text-transform:uppercase;
+  margin:0 0 1.1rem;padding-left:.85em;text-shadow:0 0 24px rgba(0,229,255,.6);opacity:0;transform:translateY(20px);}
+h1.hero{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(2.4rem,10vw,8.5rem);
+  line-height:.92;margin:0;letter-spacing:-.03em;text-transform:uppercase;
+  background:linear-gradient(178deg,#fff,#cfd4dc 45%,#7d828c);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;opacity:0;transform:translateY(60px);}
+h1.hero .i-low{text-transform:lowercase;}
+.webgl section.metal h1.hero{visibility:hidden;}
+.sub{margin-top:1.3rem;font-size:clamp(.85rem,1.6vw,1.1rem);letter-spacing:.35em;color:rgba(245,245,245,.55);
+  font-weight:500;text-transform:uppercase;opacity:0;transform:translateY(20px);max-width:46ch;}
+.body{margin-top:1.6rem;font-size:clamp(1rem,1.5vw,1.2rem);line-height:1.7;color:rgba(245,245,245,.75);
+  font-weight:500;max-width:48ch;opacity:0;transform:translateY(20px);}
+.cta{margin-top:2rem;display:inline-block;padding:14px 34px;border:1px solid rgba(0,229,255,.5);border-radius:40px;
+  color:var(--cyan);text-decoration:none;letter-spacing:.2em;font-weight:700;font-size:.8rem;text-transform:uppercase;
+  transition:all .35s;opacity:0;transform:translateY(20px);}
+.cta:hover{background:var(--cyan);color:var(--void);box-shadow:0 0 30px rgba(0,229,255,.5);}
+.show .label,.show h1.hero,.show .sub,.show .body,.show .cta{opacity:1;transform:translateY(0);
+  transition:opacity 1.05s ease,transform 1.05s cubic-bezier(.16,1,.3,1);}
+.show h1.hero{transition-delay:.1s;}.show .sub{transition-delay:.22s;}
+.show .body{transition-delay:.22s;}.show .cta{transition-delay:.34s;}
+
+.dots{position:fixed;right:26px;top:50%;transform:translateY(-50%);z-index:20;display:flex;flex-direction:column;gap:12px;}
+.dots button{width:8px;height:8px;border-radius:50%;border:none;background:rgba(245,245,245,.25);cursor:pointer;padding:0;transition:all .3s;}
+.dots button.active{background:var(--cyan);box-shadow:0 0 12px var(--cyan);transform:scale(1.3);}
+.legal{position:fixed;bottom:18px;left:28px;z-index:20;font-size:9px;letter-spacing:.22em;opacity:.3;font-weight:500;}
+.no-webgl #stage{display:none;}
+.no-webgl .bg-v{opacity:.6;}
+</style>
 </head>
 <body>
+<div id="stage"></div>
+<div class="vignette"></div>
+<div class="grain"></div>
 
-    <video id="cinematic-video" autoplay muted playsinline></video>
-    <canvas id="fx-canvas"></canvas>
-    <!-- Explicit lower-case 'i' branding injection -->
-    <div id="logo" class="ui-overlay">KNOCKSSTUDiOS</div>
+<nav>
+  <span class="brand">KNOCKSSTUD<span class="i-low">i</span>OS</span>
+  <span class="links">
+    <a href="#home">Home</a><a href="#services">Services</a><a href="#portfolio">Portfolio</a>
+    <a href="#archive">Archive</a><a href="#about">About</a><a href="#contact">Contact</a>
+  </span>
+</nav>
 
-    <script>
-        const video = document.getElementById('cinematic-video');
-        const canvas = document.getElementById('fx-canvas');
-        
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.position.z = 5;
+<div id="ui-root"></div>
+<div class="dots" id="dots"></div>
+<div class="legal">&copy; 2026 KNOCKSSTUDiOS &mdash; HOLLYWOOD MOTiON PiCTURES</div>
 
-        const metalMaterial = new THREE.MeshStandardMaterial({
-            color: 0x111111, 
-            metalness: 1.0,
-            roughness: 0.02,
-            envMapIntensity: 2.5
-        });
+<script type="module">
+import * as THREE from 'three';
 
-        const redAlertLight = new THREE.PointLight(0xff0033, 5, 50);
-        redAlertLight.position.set(0, 0, 3);
-        scene.add(redAlertLight);
+const tiles = [
+  { id:'home',     size:'full',  metal:'BAGHEERA', t:'KNOCKSSTUD<span class="i-low">i</span>OS', label:'Hollywood MOTiON Pictures', sub:'Full Production Mode &middot; 2026', video:'', poster:'', cta:'Enter' },
+  { id:'services', size:'split', t:'Services',   label:'What We Build', body:'Cinematic production, visual effects, and digital media engineered end to end. Concept to final frame, owned outright.', video:'', poster:'', cta:'See Services' },
+  { id:'portfolio',size:'full',  t:'Portfolio',  label:'Selected Work', sub:'Motion &middot; VFX &middot; Title Design', video:'', poster:'', cta:'View Work' },
+  { id:'archive',  size:'full',  metal:'THE ARCHIVE', t:'THE ARCHIVE', label:'IP Sovereignty', sub:'Built Sovereign &middot; Owned Outright', video:'', poster:'', cta:'Explore' },
+  { id:'about',    size:'text',  t:'About',      label:'The Studio', body:'KNOCKSSTUDiOS runs an independent creative stack out of production. Original. Visionary. Fearless.', video:'', poster:'', cta:'' },
+  { id:'contact',  size:'text',  t:'Contact',    label:'Start a Project', body:'hello@hollywoodimaging.studio', video:'', poster:'', cta:'Get in Touch' }
+];
 
-        const bugCount = 200;
-        const geometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(bugCount * 3);
-        const bugStates = []; 
+const root=document.getElementById('ui-root');
+tiles.forEach(tile=>{
+  const s=document.createElement('section');
+  s.id=tile.id; s.dataset.size=tile.size;
+  if(tile.metal) s.classList.add('metal');
+  let html='';
+  if(tile.video) html+='<video class="bg-v" autoplay muted loop playsinline preload="metadata"'+(tile.poster?' poster="'+tile.poster+'"':'')+'><source src="'+tile.video+'" type="video/mp4"></video>';
+  html+='<p class="label">'+tile.label+'</p>';
+  html+='<h1 class="hero">'+tile.t+'</h1>';
+  if(tile.sub)  html+='<p class="sub">'+tile.sub+'</p>';
+  if(tile.body) html+='<p class="body">'+tile.body+'</p>';
+  if(tile.cta)  html+='<a class="cta" href="#'+(tiles[(tiles.indexOf(tile)+1)%tiles.length].id)+'">'+tile.cta+'</a>';
+  s.innerHTML=html; root.appendChild(s);
+});
 
-        for(let i = 0; i < bugCount; i++) {
-            const idx = i * 3;
-            positions[idx] = (Math.random() - 0.5) * 10;
-            positions[idx+1] = (Math.random() - 0.5) * 6;
-            positions[idx+2] = (Math.random() - 0.5) * 2;
+const sectionEls=[...document.querySelectorAll('section')];
+const dots=document.getElementById('dots');
+sectionEls.forEach((s,i)=>{ const b=document.createElement('button'); b.onclick=()=>s.scrollIntoView({behavior:'smooth'}); dots.appendChild(b); });
+const dotBtns=[...dots.children];
 
-            bugStates.push({
-                x: positions[idx],
-                y: positions[idx+1],
-                z: positions[idx+2],
-                vx: (Math.random() - 0.5) * 0.04,
-                vy: (Math.random() - 0.5) * 0.04,
-                behavior: 'scatter', 
-                targetX: (Math.random() - 0.5) * 3, 
-                targetY: (Math.random() - 0.5) * 1,
-                timer: Math.random() * 500
-            });
-        }
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  e.target.classList.toggle('show', e.isIntersecting);
+  if(e.isIntersecting){ const i=sectionEls.indexOf(e.target); dotBtns.forEach((b,j)=>b.classList.toggle('active',j===i)); }
+}),{threshold:.4});
+sectionEls.forEach(s=>io.observe(s));
 
-        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        
-        const bugMaterial = new THREE.PointsMaterial({
-            color: 0x33ffaa,
-            size: 0.06,
-            transparent: true,
-            blending: THREE.AdditiveBlending,
-            opacity: 0.9
-        });
+function webglOK(){try{const c=document.createElement('canvas');
+  return !!(window.WebGLRenderingContext&&(c.getContext('webgl2')||c.getContext('webgl')));}catch(e){return false;}}
+if(!webglOK()){document.body.classList.add('no-webgl');}
+else{document.body.classList.add('webgl'); initScene();}
 
-        const bugSwarm = new THREE.Points(geometry, bugMaterial);
-        scene.add(bugSwarm);
+async function initScene(){
+  const { EffectComposer } = await import('three/addons/postprocessing/EffectComposer.js');
+  const { RenderPass }     = await import('three/addons/postprocessing/RenderPass.js');
+  const { UnrealBloomPass }= await import('three/addons/postprocessing/UnrealBloomPass.js');
+  const { FontLoader }     = await import('three/addons/loaders/FontLoader.js');
+  const { TextGeometry }   = await import('three/addons/geometries/TextGeometry.js');
+  const { MarchingCubes }  = await import('three/addons/objects/MarchingCubes.js');
 
-        let pantherPounced = false;
-        
-        video.addEventListener('timeupdate', () => {
-            if (video.currentTime > 3.5 && !pantherPounced) {
-                pantherPounced = true;
-                triggerScreenShatter();
-            }
-        });
+  const stage=document.getElementById('stage');
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 1, 100);
+  camera.position.set(0, 0, 9);
+  
+  const renderer=new THREE.WebGLRenderer({alpha:true, antialias:true});
+  renderer.setSize(innerWidth,innerHeight); renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.4; renderer.outputColorSpace=THREE.SRGBColorSpace;
+  stage.appendChild(renderer.domElement);
 
-        function triggerScreenShatter() {
-            console.log("[ENGINE] Panther impact verified. Formatting KNOCKSSTUDiOS liquid metal text matrices...");
-            bugStates.forEach(bug => {
-                bug.vx *= 4; 
-                bug.vy *= 4;
-                if(Math.random() > 0.7) bug.behavior = 'land'; 
-            });
-            
-            setTimeout(() => {
-                document.getElementById('logo').style.display = 'block';
-            }, 500);
-        }
+  const key=new THREE.PointLight(0x00ff55, 12, 50); key.position.set(6, 5, 6);
+  const rim=new THREE.PointLight(0x00e5ff, 15, 50); rim.position.set(-6, -4, -4);
+  const ambientLight = new THREE.AmbientLight(0x020a05, 2.0);
+  scene.add(key, rim, ambientLight);
 
-        const clock = new THREE.Clock();
-        
-        function mainLoop() {
-            requestAnimationFrame(mainLoop);
-            const delta = clock.getDelta();
-            const posArray = bugSwarm.geometry.attributes.position.array;
-            
-            for(let i = 0; i < bugCount; i++) {
-                const idx = i * 3;
-                const bug = bugStates[i];
+  const resolution = 32;
+  const blobMaterial = new THREE.MeshStandardMaterial({
+    color: 0x050f0a,
+    metalness: 1.0,
+    roughness: 0.05,
+    emissive: 0x00220a,
+    envMapIntensity: 1.0
+  });
 
-                if (bug.behavior === 'scatter') {
-                    posArray[idx] += bug.vx;
-                    posArray[idx+1] += bug.vy;
-                    if (Math.abs(posArray[idx]) > 6) bug.vx *= -1;
-                    if (Math.abs(posArray[idx+1]) > 4) bug.vy *= -1;
-                } 
-                else if (bug.behavior === 'land') {
-                    posArray[idx] += (bug.targetX - posArray[idx]) * 0.05;
-                    posArray[idx+1] += (bug.targetY - posArray[idx+1]) * 0.05;
-                    
-                    bug.timer--;
-                    if(bug.timer <= 0) {
-                        bug.behavior = 'flyAway'; 
-                        bug.vx = (Math.random() + 0.1) * 0.08;
-                        bug.vy = (Math.random() - 0.5) * 0.08;
-                    }
-                }
-                else if (bug.behavior === 'flyAway') {
-                    posArray[idx] += bug.vx;
-                    posArray[idx+1] += bug.vy;
-                }
-            }
-            
-            bugSwarm.geometry.attributes.position.needsUpdate = true;
-            renderer.render(scene, camera);
-        }
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const envScene = new THREE.Scene();
+  const skyMat = new THREE.ShaderMaterial({
+    side: THREE.BackSide,
+    uniforms: {
+      top: { value: new THREE.Color(0x00ff55) },
+      mid: { value: new THREE.Color(0x05060a) },
+      bot: { value: new THREE.Color(0x00e5ff) }
+    },
+    vertexShader: 'varying vec3 p; void main() { p = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+    fragmentShader: 'varying vec3 p; uniform vec3 top; uniform vec3 mid; uniform vec3 bot; void main() { float h = normalize(p).y; vec3 c = h > 0.0 ? mix(mid, top, h) : mix(mid, bot, -h); gl_FragColor = vec4(c,1.0); }'
+  });
+  envScene.add(new THREE.Mesh(new THREE.SphereGeometry(30, 16, 16), skyMat));
+  scene.environment = pmrem.fromScene(envScene, 0.05).texture;
 
-        mainLoop();
+  const effect = new MarchingCubes(resolution, blobMaterial, true, true, 10000);
+  effect.position.set(0, 0, 0);
+  effect.scale.set(3.2, 3.2, 3.2);
+  effect.enableUvs = false;
+  effect.enableColors = false;
+  scene.add(effect);
 
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-    </script>
+  const markMat=new THREE.MeshStandardMaterial({color:0xffffff,metalness:1,roughness:0.12,envMapIntensity:1.4});
+  const ring=new THREE.TorusGeometry(0.5,0.13,32,90);
+  const mark=new THREE.Group();const rA=new THREE.Mesh(ring,markMat),rB=new THREE.Mesh(ring,markMat);
+  rB.rotation.x=Math.PI/2;rB.position.x=0.42;mark.add(rA,rB);mark.position.set(0,-3.4,0);mark.scale.setScalar(0.85);scene.add(mark);
+
+  const textGroup=new THREE.Group();scene.add(textGroup);
+  const metalTiles=tiles.map((t,i)=>({i,word:t.metal})).filter(x=>x.word);
+  const fontLoader=new FontLoader();
+  fontLoader.load('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json',font=>{
+    const cache={};
+    metalTiles.forEach(({i,word})=>{
+      const geo=new TextGeometry(word,{font,size:1,height:0.28,curveSegments:8,bevelEnabled:true,bevelThickness:0.05,bevelSize:0.035,bevelSegments:4});
+      geo.computeBoundingBox();const w=geo.boundingBox.max.x-geo.boundingBox.min.x;geo.translate(-w/2,-0.5,0);
+      cache[i]={geo,fit:Math.min(7.5/w,1.0)};
+    });
+    function show(i){textGroup.clear(); if(!cache[i]){textGroup.visible=false;return;} textGroup.visible=true;
+      const{geo,fit}=cache[i];const m=new THREE.Mesh(geo,markMat);const g=new THREE.Group();g.add(m);g.scale.setScalar(fit*2.4);textGroup.add(g);}
+    const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){show(sectionEls.indexOf(e.target));}}),{threshold:.55});
+    sectionEls.forEach(s=>obs.observe(s));
+    show(0);
+  });
+
+  const composer=new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene,camera));
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.6,0.5,0.85));
+  composer.setPixelRatio(Math.min(devicePixelRatio,2));
+  
+  addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight);});
+
+  function updateMetaballs(object, time) {
+    object.reset();
+    const numblobs = 8;
+    const strength = 1.2 / ((Math.sqrt(numblobs) - 1) / 4 + 1);
+    const subtract = 12;
+
+    for (let i = 0; i < numblobs; i++) {
+      const ballx = Math.sin(i + 1.3 * time * (1.03 + 0.5 * Math.cos(0.21 * i))) * 0.22 + 0.5;
+      const bally = Math.cos(i + 1.1 * time * Math.cos(1.22 + 0.14 * i)) * 0.22 + 0.5;
+      const ballz = Math.cos(i + 1.4 * time * 0.1 * Math.sin((0.92 + 0.53 * i))) * 0.22 + 0.5;
+      object.addBall(ballx, bally, ballz, strength, subtract);
+    }
+    object.update();
+  }
+
+  let tx=0,ty=0;
+  addEventListener('pointermove',e=>{tx=(e.clientX/innerWidth-.5);ty=(e.clientY/innerHeight-.5);});
+  
+  const clock=new THREE.Clock();
+  const slow=matchMedia('(prefers-reduced-motion: reduce)').matches?0.2:1;
+
+  function loop(){
+    requestAnimationFrame(loop);
+    const dt=clock.getDelta();
+    const te=clock.getElapsedTime();
+    
+    updateMetaballs(effect, te * 0.6 * slow);
+
+    textGroup.rotation.y=THREE.MathUtils.lerp(textGroup.rotation.y,tx*0.5,0.05)+Math.sin(te*0.6)*0.04*slow;
+    textGroup.rotation.x=THREE.MathUtils.lerp(textGroup.rotation.x,ty*0.3,0.05);
+    textGroup.position.y=Math.sin(te*0.9)*0.06*slow;
+    mark.rotation.y+=dt*0.5*slow;
+    
+    camera.position.x=THREE.MathUtils.lerp(camera.position.x,tx*1.0,0.04);
+    camera.position.y=THREE.MathUtils.lerp(camera.position.y,-ty*0.8,0.04);
+    camera.lookAt(0,0,0);
+    
+    composer.render();
+  }
+  loop();
+}
+</script>
 </body>
 </html>

@@ -1,7 +1,0 @@
-bagheera-engine/
-├── CMakeLists.txt
-├── include/
-│   └── app_core.hpp
-└── src/
-    ├── main.cpp
-    └── app_core.cpp

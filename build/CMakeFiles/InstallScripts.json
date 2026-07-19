@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/root/workspace/BAGHEERA-BIO-METAL/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
