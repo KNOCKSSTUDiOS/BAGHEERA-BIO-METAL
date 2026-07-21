@@ -1,0 +1,29 @@
+name: Build & Run
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install CMake
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq cmake
+
+      - name: Configure
+        run: cmake -B build
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Run and verify
+        run: |
+          output=$(./build/bagheera_engine)
+          echo "$output"
+          echo "$output" | grep -qE "INITIALIZED|COMPLETED" || { echo "Expected INITIALIZED or COMPLETED in output"; exit 1; }
