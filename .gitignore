@@ -1,0 +1,35 @@
+# Build artifacts
+build/
+cmake-build-*/
+[Bb]uild/
+[Bb]in/
+[Oo]bj/
+
+# Compiled objects
+*.o
+*.a
+*.so
+*.dll
+*.dylib
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+
+# Runtime artifacts
+bagheera_engine
+*.exe
+
+# IDE / editor files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# Generated storage directory
+bagheera_storage/
