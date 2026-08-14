@@ -1,22 +1,48 @@
-*.safetensors
-*.ckpt
-*.pt
+﻿!CMakeLists.txt
+# Build artifacts
+# CMake generated files
+# Compiled objects
+# Generated storage directory
+# IDE / editor files
+# Runtime artifacts
+*.a
 *.bin
+*.ckpt
+*.cmake
+*.dll
+*.dylib
+*.env
+*.exe
+*.o
 *.onnx
+*.pt
+*.safetensors
+*.so
+*.swp
+*~
+.DS_Store
+.idea/
+.vscode/
+/input/*
 /models/checkpoints/*
-/models/vae/*
-/models/loras/*
 /models/clip/*
 /models/controlnet/*
+/models/loras/*
+/models/vae/*
 /output/*
-/input/*
 /temp/*
-
-venv/
-python_embeded/
-*.env
-.vscode/
-.idea/
-
+[Bb]in/
+[Bb]uild/
+[Oo]bj/
+bagheera_engine
+bagheera_storage/
+build/
+cmake_install.cmake
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
 extra_model_paths.yaml
+Makefile
+python_embeded/
 user/default/comfy.settings.json
+venv/

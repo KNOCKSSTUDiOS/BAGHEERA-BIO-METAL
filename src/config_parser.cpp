@@ -1,6 +1,5 @@
 #include "config_parser.hpp"
 #include <fstream>
-#include <sstream>
 #include <iostream>
 
 std::string ConfigParser::trim(const std::string& str) {
@@ -20,7 +19,7 @@ bool ConfigParser::LoadConfigFile(const std::string& filePath) {
     std::string line;
     while (std::getline(file, line)) {
         line = trim(line);
-        if (line.empty() || line[0] == '#') continue; // Skip comments and empty spaces
+        if (line.empty() || line[0] == '#') continue;
 
         std::size_t delimiterPos = line.find(':');
         if (delimiterPos != std::string::npos) {
@@ -30,21 +29,34 @@ bool ConfigParser::LoadConfigFile(const std::string& filePath) {
         }
     }
     file.close();
-    std::cout << "[CONFIG] Configuration file parsed successfully completely offline." << std::endl;
+    std::cout << "[CONFIG] Configuration file parsed successfully (" << configMap.size()
+              << " keys loaded) completely offline." << std::endl;
     return true;
 }
 
-std::string ConfigParser::GetValue(const std::string& key, const std::string& defaultValue) {
+std::string ConfigParser::GetValue(const std::string& key, const std::string& defaultValue) const {
     auto it = configMap.find(key);
     if (it != configMap.end()) return it->second;
     return defaultValue;
 }
 
-float ConfigParser::GetFloatValue(const std::string& key, float defaultValue) {
+float ConfigParser::GetFloatValue(const std::string& key, float defaultValue) const {
     auto it = configMap.find(key);
     if (it != configMap.end()) {
         try {
             return std::stof(it->second);
+        } catch (...) {
+            return defaultValue;
+        }
+    }
+    return defaultValue;
+}
+
+int ConfigParser::GetIntValue(const std::string& key, int defaultValue) const {
+    auto it = configMap.find(key);
+    if (it != configMap.end()) {
+        try {
+            return std::stoi(it->second);
         } catch (...) {
             return defaultValue;
         }
